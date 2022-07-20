@@ -1,45 +1,45 @@
 import React, { Component } from 'react';
-import i from './index.module.css';
+import s from './index.module.css';
 import { MdOutlineImageSearch } from 'react-icons/md';
 import Notiflix from 'notiflix';
 import PropTypes from 'prop-types';
 
 class Searchbar extends Component {
   state = {
-    searchName: '',
+    searchValue: '',
   };
 
   hendelInputValue = event => {
-    this.setState({ searchName: event.target.value.toLowerCase() });
+    this.setState({ searchValue: event.target.value.toLowerCase() });
   };
 
   hendelSubmit = e => {
     e.preventDefault();
-    if (this.state.searchName.trim() === '') {
+    if (this.state.searchValue.trim() === '') {
       Notiflix.Notify.warning('Please specify your query!');
       return;
     }
-    this.props.onSubmit(this.state.searchName);
+    this.props.onSubmit(this.state.searchValue);
 
-    this.setState({ searchName: '' });
+    this.setState({ searchValue: '' });
   };
 
   render() {
     return (
-      <header className={i.Searchbar}>
-        <form className={i.SearchForm} onSubmit={this.hendelSubmit}>
-          <button type="submit" className={i.SearchForm_button}>
+      <header className={s.Searchbar}>
+        <form className={s.SearchForm} onSubmit={this.hendelSubmit}>
+          <button type="submit" className={s.SearchForm_button}>
             <MdOutlineImageSearch style={{ width: 30, height: 30 }} />
           </button>
 
           <input
-            className={i.SearchForm_input}
+            className={s.SearchForm_input}
             type="text"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            name="searchName"
-            value={this.state.searchName}
+            name="searchValue"
+            value={this.state.searchValue}
             onChange={this.hendelInputValue}
           />
         </form>

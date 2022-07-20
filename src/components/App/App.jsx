@@ -1,37 +1,34 @@
 import React, { Component } from 'react';
 import Notiflix from 'notiflix';
-import i from './index.module.css';
+import s from './index.module.css';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
-import Searchbar from '../Searchbar';
-import ImageGallery from '../ImageGallery';
-import SearchApi from '../Api';
-import Button from '../Button';
-import Modal from '../Modal';
-import Loader from '../Loader';
+import Searchbar from 'components/Searchbar';
+import ImageGallery from 'components/ImageGallery';
+import FetchImages from 'Api';
+import Button from 'components/Button';
+import Modal from 'components/Modal';
+import Loader from 'components/Loader';
 
 class App extends Component {
   state = {
-    searchName: ' ',
-    countPage: 1,
-    per_page: 12,
-    ImagesList: [],
+    searchValue: ' ',
+    page: 1,
+    images: [],
     showModal: false,
+    largeImageURL: null,
     showLoadMore: false,
     loading: false,
-    openModalItem: { url: '', alt: '' },
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { searchName, per_page, countPage, ImagesList } = this.state;
-    if (
-      prevState.countPage !== countPage ||
-      prevState.searchName !== searchName
-    ) {
+    const { searchValue, page, images } = this.state;
+    const per_page = 12;
+    if (prevState.page !== page || prevState.searchValue !== searchValue) {
       this.setState({ showLoadMore: false, loading: true });
-      SearchApi(searchName, countPage, per_page)
-        .then(date => {
-          const filterDataHits = date.hits.map(img => {
+      FetchImages(searchValue, page, per_page)
+        .then(data => {
+          const filterDataHits = data.hits.map(img => {
             return Object.fromEntries(
               Object.entries(img).filter(([key]) =>
                 ['id', 'tags', 'largeImageURL', 'webformatURL'].includes(key)
@@ -39,26 +36,27 @@ class App extends Component {
             );
           });
           this.setState(prev => ({
-            ImagesList: [...prev.ImagesList, ...filterDataHits],
-            totalHits: date.totalHits,
+            images: [...prev.images, ...filterDataHits],
+            totalHits: data.totalHits,
             loading: false,
           }));
-          if (date.total !== date.hits.length) {
+          if (data.total !== data.hits.length) {
             this.setState({ showLoadMore: true });
           }
-          if (countPage === 1) {
+          if (page === 1) {
             Notiflix.Notify.success(
-              `Hooray! We found ${date.totalHits} images.`
+              `Hooray! We found ${data.totalHits} images.`
             );
           }
-          if (date.total <= ImagesList.length + per_page) {
+          if (data.total <= images.length + per_page) {
             this.setState({ showLoadMore: false });
             Notiflix.Notify.info(
               "We're sorry, but you've reached the end of search results."
             );
           }
         })
-        .catch(this.onApiError);
+        .catch(this.onApiError)
+        .finally(() => this.setState({ isLoading: false }));
     }
   }
   onApiError = () => {
@@ -69,45 +67,40 @@ class App extends Component {
   };
 
   onSubmit = name => {
-    this.setState(prev =>
-      prev.searchName === name && prev.countPage === 1
-        ? { countPage: 1 }
-        : {
-            searchName: name,
-            countPage: 1,
-            ImagesList: [],
-          }
-    );
+    if (name === this.state.name) return;
+    this.setState({
+      searchValue: name,
+      page: 1,
+      images: [],
+    });
   };
 
   onloadeMore = () => {
     this.setState(prev => ({
-      countPage: prev.countPage + 1,
+      page: prev.page + 1,
     }));
   };
 
-  openModal = (url, alt) => {
-    const openModalItem = { url, alt };
-    this.setState({
-      showModal: true,
-      openModalItem,
-    });
+  toggleModal = largeImageURL => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+    this.setState({ largeImageURL: largeImageURL });
   };
-  closeModal = () => {
-    this.setState({ showModal: false });
-  };
+
   render() {
-    const { ImagesList, showModal, openModalItem, showLoadMore, loading } =
-      this.state;
+    const { images, showModal, showLoadMore, loading } = this.state;
     return (
-      <div className={i.App}>
+      <div className={s.App}>
         <Searchbar onSubmit={this.onSubmit} />
         {showModal && (
-          <Modal onClose={this.closeModal}>
-            <img src={openModalItem.url} alt={openModalItem.alt} />
-          </Modal>
+          <Modal
+            onClose={this.toggleModal}
+            largeImageURL={this.state.largeImageURL}
+            tags={this.state.tags}
+          />
         )}
-        <ImageGallery params={ImagesList} openModal={this.openModal} />
+        <ImageGallery params={images} onClick={this.toggleModal} />
         {loading && <Loader />}
         {showLoadMore && (
           <Button onClick={this.onloadeMore} title="Load more" />

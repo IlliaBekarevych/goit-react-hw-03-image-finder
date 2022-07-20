@@ -1,16 +1,17 @@
 import ImageGalleryItem from './ImageGalleryItem';
-import i from './index.module.css';
+import s from './index.module.css';
 import PropTypes from 'prop-types';
 
-function ImageGallery({ params, openModal }) {
+function ImageGallery({ params, onClick }) {
   return (
-    <ul className={i.ImageGallery}>
+    <ul className={s.ImageGallery}>
       {params.map(({ id, webformatURL, largeImageURL, tags }) => (
         <ImageGalleryItem
           key={id}
           webformatURL={webformatURL}
-          alt={tags}
-          onOpen={() => openModal(largeImageURL, tags)}
+          largeImageURL={largeImageURL}
+          tags={tags}
+          onClick={onClick}
         />
       ))}
     </ul>
@@ -26,7 +27,7 @@ ImageGallery.propTypes = {
       tags: PropTypes.string,
     })
   ),
-  openModal: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ImageGallery;
