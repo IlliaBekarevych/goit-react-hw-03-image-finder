@@ -2,7 +2,7 @@ import ImageGalleryItem from './ImageGalleryItem';
 import s from './index.module.css';
 import PropTypes from 'prop-types';
 
-function ImageGallery({ params, onClick }) {
+function ImageGallery({ params, toggleModal }) {
   return (
     <ul className={s.ImageGallery}>
       {params.map(({ id, webformatURL, largeImageURL, tags }) => (
@@ -11,7 +11,7 @@ function ImageGallery({ params, onClick }) {
           webformatURL={webformatURL}
           largeImageURL={largeImageURL}
           tags={tags}
-          onClick={onClick}
+          toggleModal={toggleModal}
         />
       ))}
     </ul>
@@ -27,7 +27,7 @@ ImageGallery.propTypes = {
       tags: PropTypes.string,
     })
   ),
-  onClick: PropTypes.func.isRequired,
+  toggleModal: PropTypes.func.isRequired,
 };
 
 export default ImageGallery;

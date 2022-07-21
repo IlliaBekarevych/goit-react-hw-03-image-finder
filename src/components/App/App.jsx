@@ -5,7 +5,7 @@ import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 import Searchbar from 'components/Searchbar';
 import ImageGallery from 'components/ImageGallery';
-import FetchImages from 'Api';
+import fetchImages from 'Api';
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import Loader from 'components/Loader';
@@ -26,7 +26,7 @@ class App extends Component {
     const per_page = 12;
     if (prevState.page !== page || prevState.searchValue !== searchValue) {
       this.setState({ showLoadMore: false, loading: true });
-      FetchImages(searchValue, page, per_page)
+      fetchImages(searchValue, page, per_page)
         .then(data => {
           const filterDataHits = data.hits.map(img => {
             return Object.fromEntries(
@@ -100,10 +100,10 @@ class App extends Component {
             tags={this.state.tags}
           />
         )}
-        <ImageGallery params={images} onClick={this.toggleModal} />
+        <ImageGallery params={images} toggleModal={this.toggleModal} />
         {loading && <Loader />}
         {showLoadMore && (
-          <Button onClick={this.onloadeMore} title="Load more" />
+          <Button onloadeMore={this.onloadeMore} title="Load more" />
         )}
       </div>
     );

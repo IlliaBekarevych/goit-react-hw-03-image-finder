@@ -14,18 +14,12 @@ class Modal extends Component {
   }
   handelKeyUp = e => {
     if (e.code === 'Escape') {
-     
-      setTimeout(() => {
-        this.props.onClose();
-      }, 1000);
+      this.props.onClose();
     }
   };
   handleBackdropClick = e => {
     if (e.target === e.currentTarget) {
-    
-      setTimeout(() => {
-        this.props.onClose();
-      }, 1000);
+      this.props.onClose();
     }
   };
 

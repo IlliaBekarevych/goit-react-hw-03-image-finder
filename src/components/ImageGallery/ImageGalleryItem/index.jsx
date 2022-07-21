@@ -1,11 +1,11 @@
 import s from './index.module.css';
 import PropTypes from 'prop-types';
 
-function ImageGalleryItem({  webformatURL, largeImageURL, tags, onClick  }) {
+function ImageGalleryItem({  webformatURL, largeImageURL, tags, toggleModal  }) {
   
   return (
     <li className={s.ImageGalleryItem}  onClick={() => {
-      onClick(largeImageURL);
+      toggleModal(largeImageURL);
     }}>
       <img src={webformatURL} alt={tags} className={s.ImageGalleryItem_image} />
     </li>
@@ -15,7 +15,7 @@ function ImageGalleryItem({  webformatURL, largeImageURL, tags, onClick  }) {
 ImageGalleryItem.propTypes = {
   webformatURL: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+  toggleModal: PropTypes.func.isRequired,
 };
 
 export default ImageGalleryItem;
